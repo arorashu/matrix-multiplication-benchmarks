@@ -15,12 +15,14 @@ using namespace std;
 
 vector<vector<int>> createRandomMatrix(int size);
 void printMatrix(vector<vector<int>> &matrix);
-vector<vector<int>> multiplySquareMatricesNaive(vector<vector<int>> matrix1, vector<vector<int>> matrix2);
-vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> matrix1, vector<vector<int>> matrix2);
-vector<vector<int>> addSquareMatrices(vector<vector<int>> matrix1, vector<vector<int>> matrix2, bool isNegativeMatrix2=false);
+// all these return a new matrix
+vector<vector<int>> multiplySquareMatricesNaive(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2);
+vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2);
+vector<vector<int>> addSquareMatrices(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2, bool isNegativeMatrix2=false);
+bool checkMatrixEqual(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2);
+
 
 int main() {
-
 
     double timeDifference;
     clock_t startt, endt;
@@ -65,7 +67,9 @@ int main() {
     // virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
     // virtualMemUsed *= memInfo.mem_unit;
     // printf("virtual memory used:  %ld \n",virtualMemUsed);
-    
+
+
+    checkMatrixEqual(matrix3, matrix4);
     return 0;
 }
 /**
@@ -116,7 +120,7 @@ void printMatrix(vector<vector<int>> &matrix) {
 /**
  * Assume multiply square matrices of same size
  */ 
-vector<vector<int>> multiplySquareMatricesNaive(vector<vector<int>> matrix1, vector<vector<int>> matrix2) {
+vector<vector<int>> multiplySquareMatricesNaive(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2) {
     
     // verify if matrices can be multiplied
 
@@ -143,19 +147,16 @@ vector<vector<int>> multiplySquareMatricesNaive(vector<vector<int>> matrix1, vec
         
     }
 
-    printf("I multiplied size: %d \n", matrixSize);
+    // printf("I multiplied size: %d \n", matrixSize);
     
     return resultMatrix;
 }
 
 
 
-vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> matrix1, vector<vector<int>> matrix2) {
+vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2) {
     // verify if matrices can be multiplied
     // assume even size square matrices
-
-
-
     /**
      * if can be multiplied
      * let c = a * b
@@ -173,7 +174,7 @@ vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> matrix1, 
         return multiplySquareMatricesNaive(matrix1, matrix2);
     }
 
-    printf("matrix size: %d \n", matrixSize);
+    // printf("matrix size: %d \n", matrixSize);
     
     int partitionSize = matrixSize/2;
     vector<vector<int>> a11(partitionSize), a12(partitionSize), a21(partitionSize), a22(partitionSize);
@@ -195,7 +196,7 @@ vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> matrix1, 
         b22[rowId].assign(matrix2[rowId+partitionSize].begin()+partitionSize, matrix2[rowId+partitionSize].end());
     }
 
-    cout<<"broken matrix1 \n";
+    // cout<<"broken matrix1 \n";
     // printMatrix(a11);
     // cout<<endl;
     // printMatrix(a12);
@@ -220,22 +221,22 @@ vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> matrix1, 
     // printf("matrix m7\n");
     // printMatrix(m7);
 
-    printf("components made for size %d\n", matrixSize);
+    // printf("components made for size %d\n", matrixSize);
 
     vector<vector<int>> c11(partitionSize), c12(partitionSize),
         c21(partitionSize), c22(partitionSize);
 
     
     
-    printf("matrix m3: size: %d\n", m3.size());
-    printMatrix(m3);
-    printf("matrix m5: size: %d\n", m5.size());
-    printMatrix(m5);
+    // printf("matrix m3: size: %lu\n", m3.size());
+    // printMatrix(m3);
+    // printf("matrix m5: size: %lu\n", m5.size());
+    // printMatrix(m5);
 
     c11 = addSquareMatrices(m1, addSquareMatrices(m4, addSquareMatrices(m7, m5, true)));
-    // c12 = addSquareMatrices(m3, m5);
-    // c21 = addSquareMatrices(m2, m4);
-    // c22 = addSquareMatrices(m1, addSquareMatrices(m3, addSquareMatrices(m6, m2, true)));
+    c12 = addSquareMatrices(m3, m5);
+    c21 = addSquareMatrices(m2, m4);
+    c22 = addSquareMatrices(m1, addSquareMatrices(m3, addSquareMatrices(m6, m2, true)));
 
     vector<vector<int>> resultMatrix(matrixSize);
 
@@ -243,18 +244,24 @@ vector<vector<int>> multiplySquareMatricesStrassen(vector<vector<int>> matrix1, 
 
     // dont know why seg fault happening also
     // too big an input?
-    printf("reconstructing result size: %d \n", matrixSize);
-    // for (int rowId = 0; rowId < partitionSize; rowId++)
-    // {
-    //     resultMatrix[rowId].resize(matrixSize);
+    // printf("reconstructing result size: %d \n", matrixSize);
+    for (int rowId = 0; rowId < partitionSize; rowId++)
+    {
+        resultMatrix[rowId].resize(matrixSize);
+        resultMatrix[rowId+partitionSize].resize(matrixSize);
 
-        
-    // }
+        for(int colId=0; colId<partitionSize; colId++) {
+            resultMatrix[rowId][colId]                             = c11[rowId][colId];
+            resultMatrix[rowId][colId+partitionSize]               = c12[rowId][colId];
+            resultMatrix[rowId+partitionSize][colId]               = c21[rowId][colId];
+            resultMatrix[rowId+partitionSize][colId+partitionSize] = c22[rowId][colId];
+        }
+    }
 
     return resultMatrix;
 }
 
-vector<vector<int>> addSquareMatrices(vector<vector<int>> matrix1, vector<vector<int>> matrix2, bool isNegativeMatrix2) {
+vector<vector<int>> addSquareMatrices(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2, bool isNegativeMatrix2) {
     // verify if matrices can be multiplied
 
     /**
@@ -283,4 +290,31 @@ vector<vector<int>> addSquareMatrices(vector<vector<int>> matrix1, vector<vector
         
     }    
     return resultMatrix;
+}
+
+bool checkMatrixEqual(vector<vector<int>> const &matrix1, vector<vector<int>> const &matrix2) {
+    // verify if matrices can be multiplied
+
+    /**
+     * if can be multiplied
+     */ 
+
+    if(matrix1.size() != matrix2.size()){
+        cout<<"size mismatch \n";
+    }
+
+    int matrixSize = matrix1.size();
+    for (int i = 0; i < matrixSize; i++)
+    {
+        for (int j = 0; j < matrixSize; j++)
+        {
+            if(matrix1[i][j] != matrix2[i][j]) {
+                return false;
+            }
+        }
+        
+    }
+
+    cout<<"matrices are equal\n";
+    return true;
 }
