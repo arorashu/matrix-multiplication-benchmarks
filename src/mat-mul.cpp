@@ -1,11 +1,11 @@
 #include<iostream>
 #include<random>
-// #include<vector>
-// #include<algorithm>
+#include<vector>
 #include <time.h>
 #define STRASSEN_THRESHOLD 20
 #include "sys/types.h"
 #include "sys/sysinfo.h"
+#include<cmath>
 
 struct sysinfo memInfo;
 
@@ -28,48 +28,47 @@ int main() {
     clock_t startt, endt;
 
     int size;
-    cout<<"Enter mat size: ";
-    cin>>size;
+    // cout<<"Enter mat size: ";
+    // cin>>size;
 
-    vector<vector<int>> matrix1 = createRandomMatrix(size);
-    vector<vector<int>> matrix2 = createRandomMatrix(size);
-    // cout<<"matrix1\n";
-    // printMatrix(matrix1);
-    // cout<<"matrix2\n";
-    // printMatrix(matrix2);
+    printf("size\tnaive-time\tstrassen-time\tisEqual\n");
 
-    startt = clock();
-    vector<vector<int>> matrix3 = multiplySquareMatricesNaive(matrix1, matrix2);
-    endt = clock();
-    timeDifference = (double)(endt-startt)/CLOCKS_PER_SEC;
-    cout<<"Naive multiplied result matrix3\n";
-    // printMatrix(matrix3);
-    printf("NAIVE FINISHED --- TOTAL CPU TIME %f SECS \n",(float)timeDifference);
+    for(int power=4; power<=10; power++) {
+        size = pow(2, power);
+        printf("%d\t", size);
 
-    startt = clock();
-    vector<vector<int>> matrix4 = multiplySquareMatricesStrassen(matrix1, matrix2);
-    endt = clock();
-    timeDifference = (double)(endt-startt)/CLOCKS_PER_SEC;
-    cout<<"Strassen multiplied result matrix4\n";
-    // printMatrix(matrix4);
-    printf("STRASSEN FINISHED --- TOTAL CPU TIME %f SECS \n",(float)timeDifference);
+        vector<vector<int>> matrix1 = createRandomMatrix(size);
+        vector<vector<int>> matrix2 = createRandomMatrix(size);
+        // cout<<"matrix1\n";
+        // printMatrix(matrix1);
+        // cout<<"matrix2\n";
+        // printMatrix(matrix2);
 
+        startt = clock();
+        vector<vector<int>> matrix3 = multiplySquareMatricesNaive(matrix1, matrix2);
+        endt = clock();
+        timeDifference = (double)(endt-startt)/CLOCKS_PER_SEC;
+        // cout<<"Naive multiplied result matrix3\n";
+        // printMatrix(matrix3);
+        // printf("NAIVE FINISHED --- TOTAL CPU TIME %f SECS \n",(float)timeDifference);
+        printf("%f\t",(float)timeDifference);
 
-    // sysinfo (&memInfo);
-    // long long totalVirtualMem = memInfo.totalram;
-    // //Add other values in next statement to avoid int overflow on right hand side...
-    // totalVirtualMem += memInfo.totalswap;
-    // totalVirtualMem *= memInfo.mem_unit;
-    // printf("total virtual memory %ld \n",totalVirtualMem);
+        startt = clock();
+        vector<vector<int>> matrix4 = multiplySquareMatricesStrassen(matrix1, matrix2);
+        endt = clock();
+        timeDifference = (double)(endt-startt)/CLOCKS_PER_SEC;
+        // cout<<"Strassen multiplied result matrix4\n";
+        // printMatrix(matrix4);
+        // printf("STRASSEN FINISHED --- TOTAL CPU TIME %f SECS \n",(float)timeDifference);
+        printf("%f\t",(float)timeDifference);
 
-    // long long virtualMemUsed = memInfo.totalram - memInfo.freeram;
-    // //Add other values in next statement to avoid int overflow on right hand side...
-    // virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
-    // virtualMemUsed *= memInfo.mem_unit;
-    // printf("virtual memory used:  %ld \n",virtualMemUsed);
+        bool isEqual = checkMatrixEqual(matrix3, matrix4);
+        (isEqual==true) ? printf("true\n") : printf("false\n");
+    }
 
+    
 
-    checkMatrixEqual(matrix3, matrix4);
+    
     return 0;
 }
 /**
@@ -315,6 +314,6 @@ bool checkMatrixEqual(vector<vector<int>> const &matrix1, vector<vector<int>> co
         
     }
 
-    cout<<"matrices are equal\n";
+    // cout<<"matrices are equal\n";
     return true;
 }

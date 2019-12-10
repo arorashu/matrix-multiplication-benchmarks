@@ -38,7 +38,8 @@ For two matrices *a* and *b* that can be multiplied
 
 For two matrices of size n x n
 
-Time complexity: O(n^3)
+Time complexity: 
+![](n-3.jpg)
 
 ---
 
@@ -46,11 +47,11 @@ Time complexity: O(n^3)
 
 ## Key insight
  - Multiplication is computationally more expensive than addition
- - Utilise Dynamic programming 
+ - Utilise Divide and Conquer 
 
 
 ---
-# Preparation for Dynamic programming
+# Preparation for Divide and Conquer
 Let us break down the problem into subparts as:
 ![](strassen-mat-break.jpg)
 
@@ -81,17 +82,34 @@ i.e. **7 multiplications**, 18 Additions
 
 For two matrices of size n x n
 
-Time complexity: O(n^lg(7)) = O(n^2.81)
+Time complexity:
+![](n-28.jpg)
 
 
 ---
 
 # Results
 
+![](result-chart.jpg)
+
+
+---
+# Results
+
+![](result-table.jpg)
 
 ---
 # Some notes
 
- - Current fastest algorithms has performance : 
- - However, they have  a very large overhead, and not used currently in practice
- - The lower bound on Matrix Multiplication is proved to be: O(n^2)
+ - Current fastest algorithms has performance : "Modified" Coppersmith–Winograd algorithm
+ ![](n-2373.jpg)
+ - However, algorithms better than strassens have very large overhead, and not used in practice
+ - The lower bound on Matrix Multiplication is proved to be: 
+ ![](n-2.jpg)
+
+---
+# Future work
+
+ - Utilise parallelization
+ - Utilise distributed systems
+ - Use GPU's
