@@ -7,10 +7,22 @@ marp: true
 By: Shubham Arora
 
 ---
+
+# Problem Formulation
+
+ - Matrices are used everywhere. 
+ - Efficient matrix operations have been studied for quite some time 
+ - I compare ways of matrix multiplications, and validate the theoretical results
+
+---
 # Algorithms Compared
 
 - Naive
 - Strassens' algorithm
+
+
+
+Note: For simplicity, I consider only dense square matrices
 <!-- - Coppersmith–Winograd algorithm
 - Standard c++ implementations
   - tensorflow::ops::MatMul
@@ -113,3 +125,9 @@ Time complexity:
  - Utilise parallelization
  - Utilise distributed systems
  - Use GPU's
+
+ ---
+# References
+
+ - Wikipedia - 
+ - Introduction to Algorithms - CLRS - 3rd Edition
